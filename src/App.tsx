@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
+import './App.css'
+import SignIn from './Modules/General/SignIn';
+import SignUp from './Modules/General/SignUp';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { ILoginData, IUserLoginData } from './Common/ContextStore/ContaxtStore'
+import HomePage from './Modules/User/HomePage/HomePage';
+import AdminHomePage from './Modules/Admin/HomePage/HomePage';
+
+export const Context = React.createContext<any>(ILoginData);
 
 function App() {
+  const [context, setContext] = useState<IUserLoginData>(ILoginData);
+  // 1  - Sign In
+  // 2  - Sign Up
+  // 1  - Forget Password
+  useEffect(() => {
+    var UserData =  localStorage.getItem('UserData');
+    if(UserData !== null) {
+      var temp: any = JSON.parse(UserData)
+      setContext(temp)
+    }
+  },[])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Context.Provider value={[context, setContext]}>
+      <div>
+      { context.Spin ? <></> : <></>}
+          <Router>
+            {
+              context.UserType === 1 ? <AdminHomePage /> : 
+
+              context.UserType === 2 ? <HomePage /> : 
+              
+              context.page === 1 ? <SignIn /> : 
+              
+              context.page === 2 ? <SignUp /> :  <></>
+            }
+          </Router>
+      </div>
+    </Context.Provider>
+  )
 }
 
-export default App;
+export default App

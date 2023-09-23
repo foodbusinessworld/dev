@@ -1,0 +1,1 @@
+export const Endpoint_URL = 'https://localhost:7095/';
